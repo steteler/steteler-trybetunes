@@ -29,10 +29,10 @@ class Login extends Component {
   }
 
   onHandleClick = (loginName) => {
-    this.setState({ isLoading: true }, () => {
+    this.setState(() => ({ isLoading: true }), () => {
       createUser({ name: loginName })
         .then(() => (
-          this.setState({ isLoading: false, isLogged: true })
+          this.setState(() => ({ isLoading: false, isLogged: true }))
         ));
     });
   }
@@ -44,10 +44,11 @@ class Login extends Component {
       isLoading,
       isLogged,
     } = this.state;
+
     return (
       <div data-testid="page-login">
         {isLogged && <Redirect to="/search" />}
-        {isLoading ? <Loading loading={ isLoading } /> : (
+        {isLoading ? <Loading isLoading={ isLoading } /> : (
           <form>
             <input
               id="userName"
