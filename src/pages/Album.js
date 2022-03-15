@@ -40,12 +40,11 @@ class Album extends Component {
         <h5 data-testid="artist-name">{artistName}</h5>
         <span data-testid="album-name">{collectionName}</span>
         {
-          albums.map(({ previewUrl, trackId, trackName }) => (
-            previewUrl && (
+          albums.map((album) => (
+            album.previewUrl && (
               <MusicCard
-                previewUrl={ previewUrl }
-                key={ trackId }
-                trackName={ trackName }
+                key={ album.trackId }
+                album={ album }
               />
             )
           ))
