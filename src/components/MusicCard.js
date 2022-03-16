@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 class MusicCard extends Component {
@@ -13,13 +13,26 @@ class MusicCard extends Component {
     };
   }
 
-  onInputChange = () => {
-    const { album } = this.props;
-    this.setState(({ isChecked }) => ({ isChecked: !isChecked, isLoading: true }), () => (
-      addSong(album).then(() => (
-        this.setState(() => ({ isLoading: false }))
-      ))
+  componentDidMount = () => {
+    const { album: { trackId } } = this.props;
+    this.setState(() => ({ isLoading: true }), () => (
+      getFavoriteSongs().then((favorites) => {
+        this.setState({
+          isChecked: favorites.some((favorite) => favorite.trackId === trackId),
+        }, () => this.setState(() => ({ isLoading: false })));
+      })
     ));
+  }
+
+  onInputChange = ({ target }) => {
+    const { album } = this.props;
+    this.setState(() => ({ isLoading: true, isChecked: target.checked }), () => {
+      if (target.checked) {
+        addSong(album).then(() => this.setState(() => ({ isLoading: false })));
+      } else {
+        removeSong(album).then(() => this.setState(() => ({ isLoading: false })));
+      }
+    });
   }
 
   render() {
@@ -36,17 +49,17 @@ class MusicCard extends Component {
       <div>
         {isLoading ? <Loading isLoading={ isLoading } /> : (
           <>
-            <span>{ album.trackName }</span>
+            <span>{album.trackName}</span>
             <audio data-testid="audio-component" src={ album.previewUrl } controls>
               <track kind="captions" />
               O seu navegador não suporta o elemento
               <code>audio</code>
             </audio>
-            <label htmlFor="cardFavorite">
+            <label htmlFor={ `cardFavorite-${album.trackId}` }>
               Favorita
               <input
                 data-testid={ `checkbox-music-${album.trackId}` }
-                id="cardFavorite"
+                id={ `cardFavorite-${album.trackId}` }
                 type="checkbox"
                 onChange={ this.onInputChange }
                 checked={ isChecked }
