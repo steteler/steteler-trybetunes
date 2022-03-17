@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
@@ -75,8 +74,8 @@ class MusicCard extends Component {
   }
 }
 
-// MusicCard.propTypes = {
-//   album: PropTypes.objectOf(PropTypes.any).isRequired,
-// };
+MusicCard.propTypes = {
+  album: PropTypes.objectOf(PropTypes.any).isRequired,
+};
 
 export default MusicCard;
