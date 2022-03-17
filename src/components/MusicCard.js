@@ -76,6 +76,7 @@ class MusicCard extends Component {
 
 MusicCard.propTypes = {
   album: PropTypes.objectOf(PropTypes.any).isRequired,
+  updateFavorites: PropTypes.func.isRequired,
 };
 
 export default MusicCard;
