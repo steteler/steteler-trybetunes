@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
@@ -25,13 +25,16 @@ class MusicCard extends Component {
   }
 
   onInputChange = ({ target }) => {
-    const { album } = this.props;
-    this.setState(() => ({ isLoading: true, isChecked: target.checked }), () => {
+    const { album, updateFavorites } = this.props;
+    this.setState(() => ({ isChecked: target.checked, isLoading: true }), () => {
       if (target.checked) {
         addSong(album).then(() => this.setState(() => ({ isLoading: false })));
       } else {
-        removeSong(album).then(() => this.setState(() => ({ isLoading: false })));
+        removeSong(album).then(() => {
+          this.setState(() => ({ isLoading: false }));
+        });
       }
+      if (updateFavorites) updateFavorites();
     });
   }
 
@@ -72,12 +75,8 @@ class MusicCard extends Component {
   }
 }
 
-MusicCard.propTypes = {
-  album: PropTypes.shape({
-    previewUrl: PropTypes.string.isRequired,
-    trackId: PropTypes.number.isRequired,
-    trackName: PropTypes.string.isRequired,
-  }).isRequired,
-};
+// MusicCard.propTypes = {
+//   album: PropTypes.objectOf(PropTypes.any).isRequired,
+// };
 
 export default MusicCard;
