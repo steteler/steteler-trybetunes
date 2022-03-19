@@ -6,6 +6,11 @@ import Loading from '../components/Loading';
 class Login extends Component {
   constructor() {
     super();
+
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onHandleClick = this.onHandleClick.bind(this);
+    this.changeButtonDisabled = this.changeButtonDisabled.bind(this);
+
     this.state = {
       loginName: '',
       isButtonDisabled: true,
@@ -14,26 +19,25 @@ class Login extends Component {
     };
   }
 
-  onInputChange = ({ target: { value } }) => {
-    this.setState(() => ({
+  onInputChange({ target: { value } }) {
+    this.setState({
       loginName: value,
-    }), this.changeButtonDisabled);
+    }, this.changeButtonDisabled);
   }
 
-  changeButtonDisabled = () => {
+  onHandleClick(loginName) {
+    this.setState({ isLoading: true }, () => {
+      createUser({ name: loginName }).then(() => {
+        this.setState({ isLogged: true, isLoading: false });
+      });
+    });
+  }
+
+  changeButtonDisabled() {
     const { loginName } = this.state;
     const minCharacter = 3;
-    this.setState(() => ({
+    this.setState({
       isButtonDisabled: loginName.length < minCharacter,
-    }));
-  }
-
-  onHandleClick = (loginName) => {
-    this.setState(() => ({ isLoading: true }), () => {
-      createUser({ name: loginName })
-        .then(() => (
-          this.setState(() => ({ isLoading: false, isLogged: true }))
-        ));
     });
   }
 
@@ -46,27 +50,29 @@ class Login extends Component {
     } = this.state;
 
     return (
-      <div data-testid="page-login">
-        {isLogged && <Redirect to="/search" />}
-        {isLoading ? <Loading isLoading={ isLoading } /> : (
-          <form>
-            <input
-              id="userName"
-              type="text"
-              placeholder="Nome"
-              data-testid="login-name-input"
-              onChange={ this.onInputChange }
-              value={ loginName }
-            />
-            <button
-              type="submit"
-              data-testid="login-submit-button"
-              disabled={ isButtonDisabled }
-              onClick={ () => this.onHandleClick(loginName) }
-            >
-              Entrar
-            </button>
-          </form>
+      <div>
+        {isLogged ? <Redirect to="/search" /> : (
+          <div data-testid="page-login">
+            {isLoading ? <Loading /> : (
+              <>
+                <input
+                  type="text"
+                  placeholder="Nome"
+                  data-testid="login-name-input"
+                  onChange={ this.onInputChange }
+                  value={ loginName }
+                />
+                <button
+                  type="button"
+                  data-testid="login-submit-button"
+                  disabled={ isButtonDisabled }
+                  onClick={ () => this.onHandleClick(loginName) }
+                >
+                  Entrar
+                </button>
+              </>
+            )}
+          </div>
         )}
       </div>
     );

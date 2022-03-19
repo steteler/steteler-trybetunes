@@ -1,20 +1,9 @@
 import React, { Component } from 'react';
-import PropType from 'prop-types';
 
 class Loading extends Component {
   render() {
-    const { isLoading } = this.props;
-
-    return (
-      <div>
-        {isLoading && <h1>Carregando...</h1>}
-      </div>
-    );
+    return <h1>Carregando...</h1>;
   }
 }
-
-Loading.propTypes = {
-  isLoading: PropType.bool.isRequired,
-};
 
 export default Loading;

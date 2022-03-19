@@ -4,17 +4,12 @@ import PropTypes from 'prop-types';
 
 class Card extends Component {
   render() {
-    const
-      {
-        // artistId,
-        artistName,
-        collectionId,
-        collectionName,
-        // collectionPrice,
-        artworkUrl100,
-        // releaseDate,
-        // trackCount,
-      } = this.props;
+    const {
+      artistName,
+      collectionId,
+      collectionName,
+      artworkUrl100,
+    } = this.props;
 
     return (
       <div>

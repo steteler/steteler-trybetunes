@@ -7,40 +7,43 @@ import searchAlbumsAPI from '../services/searchAlbumsAPI';
 class Search extends Component {
   constructor() {
     super();
+
+    this.onInputChange = this.onInputChange.bind(this);
+    this.changeButtonDisabled = this.changeButtonDisabled.bind(this);
+    this.onHandleClick = this.onHandleClick.bind(this);
+
     this.state = {
       inputSearch: '',
       isButtonDisabled: true,
       isLoading: false,
       artistName: '',
-      album: [],
+      artists: [],
     };
   }
 
-  onInputChange = ({ target: { value } }) => {
-    this.setState(() => ({
-      inputSearch: value,
-    }), this.changeButtonDisabled);
+  onInputChange({ target: { value } }) {
+    this.setState({ inputSearch: value }, this.changeButtonDisabled);
   }
 
-  changeButtonDisabled = () => {
+  onHandleClick() {
     const { inputSearch } = this.state;
-    const minCharacter = 2;
-    this.setState(() => ({
-      isButtonDisabled: inputSearch.length < minCharacter,
-    }));
-  }
-
-  onHandleClick = () => {
-    const { inputSearch } = this.state;
-    this.setState(() => ({
+    this.setState({
       isLoading: true,
       artistName: inputSearch,
       inputSearch: '',
-    }), () => (
-      searchAlbumsAPI(inputSearch)
-        .then((album) => (
-          this.setState(() => ({ isLoading: false, album }))
-        ))));
+    }, async () => {
+      this.changeButtonDisabled();
+      const artists = await searchAlbumsAPI(inputSearch);
+      this.setState({ isLoading: false, artists });
+    });
+  }
+
+  changeButtonDisabled() {
+    const { inputSearch } = this.state;
+    const minCharacter = 2;
+    this.setState({
+      isButtonDisabled: inputSearch.length < minCharacter,
+    });
   }
 
   render() {
@@ -49,14 +52,13 @@ class Search extends Component {
       isButtonDisabled,
       isLoading,
       artistName,
-      album,
+      artists,
     } = this.state;
 
     return (
       <div data-testid="page-search">
         <Header />
-        Search
-        {isLoading ? <Loading isLoading={ isLoading } /> : (
+        {isLoading ? <Loading /> : (
           <div>
             <input
               data-testid="search-artist-input"
@@ -66,7 +68,7 @@ class Search extends Component {
             />
             <button
               data-testid="search-artist-button"
-              type="submit"
+              type="button"
               disabled={ isButtonDisabled }
               onClick={ this.onHandleClick }
             >
@@ -74,9 +76,9 @@ class Search extends Component {
             </button>
           </div>
         )}
-        {artistName && <h3>{ `Resultado de álbuns de: ${artistName}` }</h3>}
-        {!album.length ? <p>Nenhum álbum foi encontrado</p> : (
-          album.map((artist) => (
+        {artistName && <p>{ `Resultado de álbuns de: ${artistName}` }</p>}
+        {!artists.length ? <p>Nenhum álbum foi encontrado</p> : (
+          artists.map((artist) => (
             <Card key={ artist.collectionId } { ...artist } />
           ))
         )}

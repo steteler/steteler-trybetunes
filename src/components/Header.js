@@ -6,16 +6,16 @@ import Loading from './Loading';
 class Header extends Component {
   constructor() {
     super();
+
     this.state = {
       userName: '',
       isLoading: true,
     };
   }
 
-  componentDidMount = () => {
-    getUser().then(({ name }) => {
-      this.setState(() => ({ userName: name, isLoading: false }));
-    });
+  async componentDidMount() {
+    const { name } = await getUser();
+    this.setState({ userName: name, isLoading: false });
   }
 
   render() {
@@ -26,8 +26,7 @@ class Header extends Component {
 
     return (
       <header data-testid="header-component">
-        <span>cabeçalho</span>
-        {isLoading ? <Loading isLoading={ isLoading } /> : (
+        {isLoading ? <Loading /> : (
           <div data-testid="header-user-name">{ userName }</div>
         )}
         <Link to="/search" data-testid="link-to-search">Pesquisa</Link>

@@ -7,6 +7,7 @@ import getMusics from '../services/musicsAPI';
 class Album extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       artistName: '',
       collectionName: '',
@@ -14,16 +15,15 @@ class Album extends Component {
     };
   }
 
-  componentDidMount = () => {
+  async componentDidMount() {
     const { match: { params: { id } } } = this.props;
-    getMusics(id).then((musics) => (
-      this.setState(() => (
-        {
-          artistName: musics[0].artistName,
-          collectionName: musics[0].collectionName,
-          albums: musics,
-        }
-      ))));
+    const musics = await getMusics(id);
+
+    this.setState({
+      artistName: musics[0].artistName,
+      collectionName: musics[0].collectionName,
+      albums: musics,
+    });
   }
 
   render() {
@@ -33,10 +33,10 @@ class Album extends Component {
         collectionName,
         albums,
       } = this.state;
+
     return (
       <div data-testid="page-album">
         <Header />
-        Album
         <h5 data-testid="artist-name">{artistName}</h5>
         <span data-testid="album-name">{collectionName}</span>
         {
@@ -61,4 +61,5 @@ Album.propTypes = {
     }),
   }).isRequired,
 };
+
 export default Album;

@@ -6,29 +6,30 @@ import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 class Favorites extends Component {
   constructor() {
     super();
+
+    this.updateFavorites = this.updateFavorites.bind(this);
+
     this.state = {
-      favoriteSongs: [],
+      favorites: [],
     };
   }
 
-  updateFavorites = () => {
-    getFavoriteSongs().then((favorites) => {
-      this.setState(() => ({ favoriteSongs: [...favorites] }));
-    });
-  }
-
-  componentDidMount = () => {
+  componentDidMount() {
     this.updateFavorites();
   }
 
+  async updateFavorites() {
+    const favorites = await getFavoriteSongs();
+    this.setState({ favorites });
+  }
+
   render() {
-    const { favoriteSongs } = this.state;
+    const { favorites } = this.state;
     return (
       <div data-testid="page-favorites">
         <Header />
-        Favorites
         {
-          favoriteSongs.map((favorite) => (
+          favorites.map((favorite) => (
             <MusicCard
               key={ favorite.trackId }
               album={ favorite }
